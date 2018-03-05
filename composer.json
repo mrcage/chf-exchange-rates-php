@@ -1,6 +1,6 @@
 {
-    "name": "mrcage/ezv-exchange-rates",
-    "description": "Retrieves exchange rates from Swiss Federal Customs Administration",
+    "name": "mrcage/ezv-chf-exchange-rates",
+    "description": "Retrieves Swiss Franc exchange rates for foreign currencies based on data from the website of the Swiss Federal Customs Administration.",
     "type": "library",
     "license": "LGPL",
     "authors": [

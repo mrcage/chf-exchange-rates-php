@@ -1,6 +1,6 @@
 # Swiss Franc exchange rate query library for PHP
 
-Retrieves exchange rates for foreign currencies from the website of the Swiss Federal Customs Administration.
+Retrieves Swiss Franc exchange rates for foreign currencies based on data from the website of the Swiss Federal Customs Administration.
 
 https://www.estv.admin.ch/estv/en/home/mehrwertsteuer/dienstleistungen/fremdwaehrungskurse.html
 
