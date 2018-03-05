@@ -1,0 +1,22 @@
+{
+    "name": "mrcage/ezv-exchange-rates",
+    "description": "Retrieves exchange rates from Swiss Federal Customs Administration",
+    "type": "library",
+    "license": "LGPL",
+    "authors": [
+        {
+            "name": "Nicolas Perrenoud",
+            "email": "mail@nicu.ch"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "MrCage\\EzvExchangeRates\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=7.1.3",
+        "illuminate/support": "~5.5",
+        "nesbot/carbon": "~1.0"
+    }
+}
