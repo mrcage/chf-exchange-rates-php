@@ -14,6 +14,8 @@ class EzvExchangeRates
     const EXCHANGE_RATE_XML_TODAY = 'http://www.pwebapps.ezv.admin.ch/apps/rates/rate/getxml?activeSearchType=today';
     const EXCHANGE_RATE_XML_DATE = 'http://www.pwebapps.ezv.admin.ch/apps/rates/rate/getxml?activeSearchType=userDefinedDay&d=';
 
+    const CACHE_TIME = 10080;
+
     /**
      * Retrieves the selected exchange rate for the given day (on weekends, the latest available value is used).
      * 
@@ -28,7 +30,8 @@ class EzvExchangeRates
             $url = self::EXCHANGE_RATE_XML_DATE . $date->format('Ymd');
         }
         // Cache results for a week, to avoid constant API calls for identical URLs
-        return Cache::remember('EzvExchangeRates:rate:'.$url, 10080, function () use ($url, $currency) {
+        $dateString = ($date != null ? $date : Carbon::today())->format('Ymd');
+        return Cache::remember('EzvExchangeRates:rate:'.$currency.':'.$dateString, self::CACHE_TIME, function () use ($url, $currency) {
             $context  = stream_context_create(array('http' => array('header' => 'Accept: application/xml')));
             $xml = file_get_contents($url, false, $context);
             $xml = simplexml_load_string($xml);
@@ -44,19 +47,21 @@ class EzvExchangeRates
     /**
      * Gets a list of all available currencies.
      * 
-     * @return array the list of currency codes (lowercase)
+     * @return array the list of currency codes as array, the key being the (uppercase) currency code, and the value the base value used for the exchange rate.
      */
     public static function listCurrencies() : array {
         // Cache results for a week, to avoid constant API calls for identical URLs
-        return Cache::remember('EzvExchangeRates:currencies', 10080, function () {
+        return Cache::remember('EzvExchangeRates:currencies', self::CACHE_TIME, function () {
             $context  = stream_context_create(array('http' => array('header' => 'Accept: application/xml')));
             $url = self::EXCHANGE_RATE_XML_TODAY;
             $xml = file_get_contents($url, false, $context);
             $xml = simplexml_load_string($xml);
             $currencies = [];
             foreach ($xml->devise as $devise) {
-                $currencies[] = $devise['code'];
+                $key = strtoupper((string)$devise['code']);
+                $currencies[$key] = (int)$devise->waehrung;
             }
+            ksort($currencies);
             return $currencies;
         });
     }
