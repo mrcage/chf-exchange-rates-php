@@ -20,7 +20,7 @@ The library uses internal caching of requested data (cache time is one week).
 
 The date must be specified as [Carbon](http://carbon.nesbot.com) date object.
 
-    $rate = EzvExchangeRates::getExchangeRate('USR', Carbon::yesterday());
+    $rate = EzvExchangeRates::getExchangeRate('USD', Carbon::yesterday());
 
 ### Get all available currencies
 
