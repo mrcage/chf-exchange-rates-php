@@ -40,7 +40,7 @@ class EzvExchangeRates
                     return (float)$devise->kurs;
                 }
             }
-            throw new Exception('Unable to find current exchange rate for ' . $currency);
+            throw new \Exception('Unable to find current exchange rate for ' . $currency);
         });
     }
 
