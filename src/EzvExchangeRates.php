@@ -20,19 +20,18 @@ class EzvExchangeRates
      *
      * @param string $currency the currency, eg. EUR or USD (case-insensitive)
      * @param Carbon\Carbon $date the date, or null to use the current day
+     * @param bool $useCache if set to true, use cache to remember the value
      * @return float the exchange rate compared to the Swiss Franc (CHF)
      */
-    public static function getExchangeRate(string $currency, Carbon $date = null): float
+    public static function getExchangeRate(string $currency, Carbon $date = null, bool $useCache = true): float
     {
         if ($date == null || $date->isToday()) {
             $url = self::EXCHANGE_RATE_XML_TODAY;
         } else {
             $url = self::EXCHANGE_RATE_XML_DATE . $date->format('Ymd');
         }
-        // Cache results for a week, to avoid constant API calls for identical URLs
-        $dateString = ($date != null ? $date : Carbon::today())->format('Ymd');
-        $cacheKey = 'EzvExchangeRates:rate:' . $currency . ':' . $dateString;
-        return Cache::remember($cacheKey, Carbon::now()->addWeek(1), function () use ($url, $currency) {
+
+        $fetchFunction = function () use ($url, $currency) {
             $context  = stream_context_create([
                 'http' => [
                     'header' => 'Accept: application/xml',
@@ -46,19 +45,27 @@ class EzvExchangeRates
                 }
             }
             throw new \Exception('Unable to find current exchange rate for ' . $currency);
-        });
+        };
+
+        if (!$useCache) {
+            return $fetchFunction();
+        }
+
+        // Cache results for a week, to avoid constant API calls for identical URLs
+        $dateString = ($date != null ? $date : Carbon::today())->format('Ymd');
+        $cacheKey = 'EzvExchangeRates:rate:' . $currency . ':' . $dateString;
+        return Cache::remember($cacheKey, Carbon::now()->addWeek(1), $fetchFunction);
     }
 
     /**
      * Gets a list of all available currencies.
      *
+     * @param bool $useCache if set to true, use cache to remember the value
      * @return array the list of currency codes as array, the key being the (uppercase) currency code, and the value the base value used for the exchange rate.
      */
-    public static function listCurrencies(): array
+    public static function listCurrencies(bool $useCache = true): array
     {
-        // Cache results for a week, to avoid constant API calls for identical URLs
-        $cacheKey = 'EzvExchangeRates:currencies';
-        return Cache::remember($cacheKey, Carbon::now()->addWeek(1), function () {
+        $fetchFunction = function () {
             $context  = stream_context_create([
                 'http' => [
                     'header' => 'Accept: application/xml',
@@ -74,6 +81,14 @@ class EzvExchangeRates
             }
             ksort($currencies);
             return $currencies;
-        });
+        };
+
+        if (!$useCache) {
+            return $fetchFunction();
+        }
+
+        // Cache results for a week, to avoid constant API calls for identical URLs
+        $cacheKey = 'EzvExchangeRates:currencies';
+        return Cache::remember($cacheKey, Carbon::now()->addWeek(1), $fetchFunction);
     }
 }
