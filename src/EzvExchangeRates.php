@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Cache;
 
 /**
  * Retrieves exchange rates from Swiss Federal Customs Administration.
- * 
+ *
  * More information https://www.ezv.admin.ch/ezv/en/home/information-companies/declaring-goods/exchange-rates--sell-.html
  */
 class EzvExchangeRates
@@ -16,7 +16,7 @@ class EzvExchangeRates
 
     /**
      * Retrieves the selected exchange rate for the given day (on weekends, the latest available value is used).
-     * 
+     *
      * @param string $currency the currency, eg. EUR or USD (case-insensitive)
      * @param Carbon\Carbon $date the date, or null to use the current day
      * @return float the exchange rate compared to the Swiss Franc (CHF)
@@ -44,7 +44,7 @@ class EzvExchangeRates
 
     /**
      * Gets a list of all available currencies.
-     * 
+     *
      * @return array the list of currency codes as array, the key being the (uppercase) currency code, and the value the base value used for the exchange rate.
      */
     public static function listCurrencies() : array {
