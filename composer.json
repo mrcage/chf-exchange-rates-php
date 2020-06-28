@@ -2,7 +2,7 @@
     "name": "mrcage/chf-exchange-rates",
     "description": "Retrieves Swiss Franc exchange rates for foreign currencies based on data from the website of the Swiss Federal Customs Administration.",
     "type": "library",
-    "license": "LGPL",
+    "license": "LGPL-3.0-or-later",
     "authors": [
         {
             "name": "Nicolas Perrenoud",
