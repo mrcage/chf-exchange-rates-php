@@ -31,8 +31,13 @@ class EzvExchangeRates
         }
         // Cache results for a week, to avoid constant API calls for identical URLs
         $dateString = ($date != null ? $date : Carbon::today())->format('Ymd');
-        return Cache::remember('EzvExchangeRates:rate:' . $currency . ':' . $dateString, now()->addWeek(1), function () use ($url, $currency) {
-            $context  = stream_context_create(array('http' => array('header' => 'Accept: application/xml')));
+        $cacheKey = 'EzvExchangeRates:rate:' . $currency . ':' . $dateString;
+        return Cache::remember($cacheKey, Carbon::now()->addWeek(1), function () use ($url, $currency) {
+            $context  = stream_context_create([
+                'http' => [
+                    'header' => 'Accept: application/xml',
+                ],
+            ]);
             $xml = file_get_contents($url, false, $context);
             $xml = simplexml_load_string($xml);
             foreach ($xml->devise as $devise) {
@@ -52,8 +57,13 @@ class EzvExchangeRates
     public static function listCurrencies(): array
     {
         // Cache results for a week, to avoid constant API calls for identical URLs
-        return Cache::remember('EzvExchangeRates:currencies', self::CACHE_TIME, function () {
-            $context  = stream_context_create(array('http' => array('header' => 'Accept: application/xml')));
+        $cacheKey = 'EzvExchangeRates:currencies';
+        return Cache::remember($cacheKey, Carbon::now()->addWeek(1), function () {
+            $context  = stream_context_create([
+                'http' => [
+                    'header' => 'Accept: application/xml',
+                ],
+            ]);
             $url = self::EXCHANGE_RATE_XML_TODAY;
             $xml = file_get_contents($url, false, $context);
             $xml = simplexml_load_string($xml);
