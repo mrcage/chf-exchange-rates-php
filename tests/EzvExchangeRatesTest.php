@@ -23,5 +23,4 @@ final class EzvExchangeRatesTest extends TestCase
         $this->assertArrayHasKey('USD', $currencies);
         $this->assertArrayHasKey('GBP', $currencies);
     }
-
 }
