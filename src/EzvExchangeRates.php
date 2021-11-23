@@ -12,8 +12,19 @@ use Illuminate\Support\Facades\Cache;
  */
 class EzvExchangeRates
 {
-    const EXCHANGE_RATE_XML_TODAY = 'http://www.pwebapps.ezv.admin.ch/apps/rates/rate/getxml?activeSearchType=today';
-    const EXCHANGE_RATE_XML_DATE = 'http://www.pwebapps.ezv.admin.ch/apps/rates/rate/getxml?activeSearchType=userDefinedDay&d=';
+    /**
+     * URL for daily exchange rate
+     * 
+     * @see https://www.ezv.admin.ch/ezv/en/home/information-companies/declaring-goods/exchange-rates--sell-.html
+     */
+    const EXCHANGE_RATE_XML_DAILY = 'https://www.backend-rates.ezv.admin.ch/api/xmldaily';
+
+    /** 
+     * URL for month average exchange rate
+     * 
+     * @see https://www.estv.admin.ch/estv/de/home/mehrwertsteuer/mwst-abrechnen/mwst-fremdwaehrungskurse/mwst-monatsmittelkurse/mwst-aktueller-monatsmittelkurs.html
+     */
+    const EXCHANGE_RATE_XML_AVG_MONTH = 'https://www.backend-rates.ezv.admin.ch/api/xmlavgmonth';
 
     /**
      * Retrieves the selected exchange rate for the given day (on weekends, the latest available value is used).
@@ -26,9 +37,9 @@ class EzvExchangeRates
     public static function getExchangeRate(string $currency, Carbon $date = null, bool $useCache = true): float
     {
         if ($date == null || $date->isToday()) {
-            $url = self::EXCHANGE_RATE_XML_TODAY;
+            $url = self::EXCHANGE_RATE_XML_DAILY;
         } else {
-            $url = self::EXCHANGE_RATE_XML_DATE . $date->format('Ymd');
+            $url = self::EXCHANGE_RATE_XML_DAILY . '?d=' .$date->format('Ymd');
         }
 
         $fetchFunction = function () use ($url, $currency) {
@@ -39,6 +50,7 @@ class EzvExchangeRates
             ]);
             $xml = file_get_contents($url, false, $context);
             $xml = simplexml_load_string($xml);
+
             foreach ($xml->devise as $devise) {
                 if ($devise['code'] == strtolower($currency)) {
                     return (float) $devise->kurs;
@@ -71,7 +83,7 @@ class EzvExchangeRates
                     'header' => 'Accept: application/xml',
                 ],
             ]);
-            $url = self::EXCHANGE_RATE_XML_TODAY;
+            $url = self::EXCHANGE_RATE_XML_DAILY;
             $xml = file_get_contents($url, false, $context);
             $xml = simplexml_load_string($xml);
             $currencies = [];

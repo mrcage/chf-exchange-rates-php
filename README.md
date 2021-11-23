@@ -2,7 +2,7 @@
 
 Retrieves Swiss Franc exchange rates for foreign currencies based on data from the website of the Swiss Federal Customs Administration.
 
-https://www.estv.admin.ch/estv/en/home/mehrwertsteuer/dienstleistungen/fremdwaehrungskurse.html
+https://www.estv.admin.ch/estv/en/home/value-added-tax/accounting-vat/vat-foreign-exchange-rates.html
 
 The library uses internal caching of requested data (cache time is one week).
 
@@ -16,7 +16,7 @@ The library uses internal caching of requested data (cache time is one week).
 
     $rate = EzvExchangeRates::getExchangeRate('EUR');
 
-### Get exchagen rate for a day in the past
+### Get exchange rate for a day in the past
 
 The date must be specified as [Carbon](http://carbon.nesbot.com) date object.
 
