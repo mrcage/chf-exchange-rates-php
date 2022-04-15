@@ -12,7 +12,7 @@ final class EzvExchangeRatesTest extends TestCase
         $currency = 'EUR';
 
         $rate = EzvExchangeRates::getExchangeRate($currency, $date, false);
-        $this->assertInternalType('float', $rate);
+        $this->assertIsFloat($rate);
         $this->assertEquals(1.07474, $rate);
     }
 
